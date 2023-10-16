@@ -21,6 +21,7 @@
 typedef struct s_philo
 {
 	struct s_data	*data;
+	int	sign_philo;
 }		t_philo;
 
 typedef struct s_data
@@ -29,6 +30,7 @@ typedef struct s_data
 	pthread_mutex_t	lock;
 	pthread_t	*tid;
 	t_philo 	*philos;
+	int	sign_philo;
 	int		num_philo;
 }		t_data;
 

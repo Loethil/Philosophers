@@ -13,30 +13,30 @@
 
 pthread_mutex_t	lock;
 
-void	*routine(void *data_pointer)
+void	*routine(void *data)
 {
-	int	*nmb;
+	t_data	*stru;
 
+	stru = (t_data *)data;
 	pthread_mutex_lock(&lock);
-	nmb = (int *)data_pointer;
+	printf("hello i'm philo number %d\n", stru->sign_philo++);
+	// stru->sign_philo = i;
 	pthread_mutex_unlock(&lock);
-	printf("hello i'm philo number %d\n", *nmb);
 	return (NULL);
 }
 
 int	yes(t_data *data, char **argv)
 {
-	int	data_pointer = 0;
 	int	i = 0;
 
+	data->sign_philo = 1;
 	pthread_mutex_init(&data->mutex, NULL);
 	data->num_philo = ft_atoi(argv[1]);
 	data->tid = malloc(data->num_philo * sizeof(t_data));
 	while (i < data->num_philo)
 	{
-		pthread_create(&data->tid[i], NULL, &routine, &data_pointer);
+		pthread_create(&data->tid[i], NULL, &routine, &data);
 		pthread_join(data->tid[i], NULL);
-		data_pointer++;
 		i++;
 	}
 	return (0);

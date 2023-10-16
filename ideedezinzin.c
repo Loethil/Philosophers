@@ -57,3 +57,11 @@ int	main(int argc, char **argv
 	printf("philo1 is dead at time = %lld ms \n", philo1.horloge);
 	return (0);
 }
+
+void	*routine(void *data)
+{
+	t_data	*stru;
+
+	stru = (t_data *)data;
+	return (NULL);
+}
