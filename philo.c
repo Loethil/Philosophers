@@ -11,27 +11,43 @@
 /* ************************************************************************** */
 #include "philo.h"
 
+pthread_mutex_t	lock;
+
+void	*routine(void *data_pointer)
+{
+	int	*nmb;
+
+	pthread_mutex_lock(&lock);
+	nmb = (int *)data_pointer;
+	pthread_mutex_unlock(&lock);
+	printf("hello i'm philo number %d\n", *nmb);
+	return (NULL);
+}
+
+int	yes(t_data *data, char **argv)
+{
+	int	data_pointer = 0;
+	int	i = 0;
+
+	pthread_mutex_init(&data->mutex, NULL);
+	data->num_philo = ft_atoi(argv[1]);
+	data->tid = malloc(data->num_philo * sizeof(t_data));
+	while (i < data->num_philo)
+	{
+		pthread_create(&data->tid[i], NULL, &routine, &data_pointer);
+		pthread_join(data->tid[i], NULL);
+		data_pointer++;
+		i++;
+	}
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {
-	t_philo	philo1;
-	struct	timeval	current_time;
-	long long int	time;
-
-	if (argc != 3)
+	t_data	data;
+	
+	if (argc != 5)
 		return (0);
-	gettimeofday(&current_time, NULL);
-	// printf("micro seconds : %ld\n", current_time.tv_usec);
-	time = current_time.tv_usec / 1000;
-	philo1.status = 0;
-	while (philo1.status == 0)
-	{
-		gettimeofday(&current_time, NULL);
-		philo1.horloge = current_time.tv_usec / 1000;
-		if(philo1.horloge >= time + 10)
-			philo1.status = 1;
-		else if (philo1.status == 0)
-			printf("philo1 alive and waiting to die at time = %lld ms\n", philo1.horloge);
-	}
-	printf("philo1 is dead at time = %lld ms \n", philo1.horloge);
+	yes(&data, argv);
 	return (0);
 }
