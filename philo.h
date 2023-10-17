@@ -22,21 +22,25 @@
 typedef struct s_philo
 {
 	struct s_data	*data;
-	u_int64_t        time_to_die;
+	pthread_mutex_t	r;
+	pthread_mutex_t	l;
+	long long        time_to_die;
 }		t_philo;
 
 typedef struct s_data
 {
-	pthread_mutex_t	mutex;
+	pthread_mutex_t	*forks;
 	pthread_mutex_t	lock;
 	pthread_t	*tid;
 	t_philo 	*philos;
+	int		*tabtest;
+	int		meals_num;
 	int		sign_philo;
 	int		num_philo;
-	u_int64_t       death_time;
-	u_int64_t       eat_time;
-	u_int64_t       sleep_time;
-	u_int64_t       start_time;
+	long long	death_time;
+	long long	eat_time;
+	long long	sleep_time;
+	long long	start_time;
 }		t_data;
 
 int	ft_isdigit(int c);

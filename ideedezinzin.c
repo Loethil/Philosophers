@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <stdio.h>
+#include "philo.h"
 
 
 // Petit fonctionnement des threads et de mutex

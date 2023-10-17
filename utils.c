@@ -13,7 +13,7 @@
 
 int	ft_isdigit(int c)
 {
-	if (c >= '0' && c <= '9')
+	if (c >= 0 && c <= 9)
 		return (1);
 	else
 		return (0);
@@ -26,7 +26,7 @@ int	ft_atoi(const char *str)
 
 	o = 0;
 	res = 0;
-	while (str[o] && (ft_isdigit(str[o]) == 1))
+	while (str[o] && (ft_isdigit(str[o] - '0') == 1))
 		res = res * 10 + str[o++] - '0';
 	return (res);
 }
