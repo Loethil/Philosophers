@@ -30,3 +30,31 @@ int	ft_atoi(const char *str)
 		res = res * 10 + str[o++] - '0';
 	return (res);
 }
+
+uint64_t	get_time()
+{
+	struct	timeval	clock;
+	uint64_t	time;
+
+	gettimeofday(&clock, NULL);
+	time = (clock.tv_sec * 1000) + (clock.tv_usec / 1000);
+	return (time);
+}
+
+int	setting_data(t_data *data, char **argv)
+{
+	data->sign_philo = 1;
+	data->base_time = get_time();
+	data->num_philo = ft_atoi(argv[1]);
+	data->death_time = ft_atoi(argv[2]);
+	data->eat_time = ft_atoi(argv[3]);
+	data->sleep_time = ft_atoi(argv[4]);
+	data->forks = malloc(data->num_philo * sizeof(pthread_mutex_t));
+	return (0);
+}
+
+int	ft_usleep(uint64_t time)
+{
+	usleep(time * 1000);
+	return (0);
+}

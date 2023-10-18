@@ -66,3 +66,4 @@ void	*routine(void *data)
 	stru = (t_data *)data;
 	return (NULL);
 }
+

@@ -12,40 +12,52 @@
 #include "philo.h"
 
 
+void	*eat(t_data *stru)
+{
+	uint64_t	time;
+
+	time = get_time() - stru->base_time;
+	printf("[%ldms] i %d start eating\n", time, stru->sign_philo);
+	if (stru->sign_philo == 1)
+	{
+		pthread_mutex_lock(&stru->forks[stru->sign_philo]);
+		pthread_mutex_lock(&stru->forks[stru->num_philo]);
+		printf("[%ldms] i have r = %d, and l = %d\n", time, stru->num_philo, stru->sign_philo);
+		ft_usleep(stru->eat_time);
+		time = get_time() - stru->base_time;
+		pthread_mutex_unlock(&stru->forks[stru->sign_philo]);
+		pthread_mutex_unlock(&stru->forks[stru->num_philo]);
+		printf("[%ldms] i %d have finished eating\n\n", time, stru->sign_philo);
+	}
+	else
+	{
+		pthread_mutex_lock(&stru->forks[stru->sign_philo]);
+		pthread_mutex_lock(&stru->forks[stru->sign_philo - 1]);
+		printf("[%ldms] i have r = %d, and l = %d\n", time, stru->sign_philo - 1, stru->sign_philo);
+		ft_usleep(stru->eat_time);
+		time = get_time() - stru->base_time;
+		pthread_mutex_unlock(&stru->forks[stru->sign_philo]);
+		pthread_mutex_unlock(&stru->forks[stru->sign_philo - 1]);
+		printf("[%ldms] i %d have finished eating\n\n", time, stru->sign_philo);
+	}
+	return (NULL);
+}
+
 void	*routine(void *data)
 {
 	t_data	*stru;
 
 	stru = (t_data *)data;
-	pthread_mutex_lock(&stru->lock);
-	printf("hello i'm philo number %d\n", stru->sign_philo++);
-	if (stru->sign_philo == 0)
-	{
-		// eat();
-		// sleep();
-		// think();
-		pthread_mutex_lock(&stru->forks[stru->sign_philo]);
-		pthread_mutex_lock(&stru->forks[stru->num_philo]);
-		printf("i have r = %d, and l = %d\n", stru->sign_philo, stru->num_philo);
-	}
-	else
-	{
-		// eat(); x temps tu check la mort dedans
-		// sleep();
-		// think();
-		pthread_mutex_lock(&stru->forks[stru->sign_philo]);
-		pthread_mutex_lock(&stru->forks[stru->sign_philo - 1]);
-		printf("i have r = %d, and l = %d\n", stru->sign_philo, stru->sign_philo - 1);
-	}
-	pthread_mutex_unlock(&stru->lock);
+	eat(stru);
+	stru->sign_philo++;
 	return (NULL);
 }
 
-int	start(t_data *data)
+int	start(t_data *data, char **argv)
 {
 	int	i = 0;
 
-	data->sign_philo = 0;
+	setting_data(data, argv);
 	pthread_mutex_init(&data->lock, NULL);
 	data->tid = malloc(data->num_philo * sizeof(t_data));
 	while (i < data->num_philo)
@@ -57,20 +69,6 @@ int	start(t_data *data)
 	return (0);
 }
 
-int	setting_data(t_data *data, char **argv)
-{
-	struct	timeval	current_time;
-
-	gettimeofday(&current_time, NULL);
-	data->num_philo = ft_atoi(argv[1]);
-	data->death_time = ft_atoi(argv[2]);
-	data->eat_time = ft_atoi(argv[3]);
-	data->sleep_time = ft_atoi(argv[4]);
-	data->forks = malloc(data->num_philo * sizeof(pthread_mutex_t));
-	if (argv[5])
-		data->meals_num =  ft_atoi(argv[5]);
-	return (0);
-}
 
 int	main(int argc, char **argv)
 {
@@ -78,7 +76,6 @@ int	main(int argc, char **argv)
 	
 	if (argc != 5)
 		return (0);
-	setting_data(&data, argv);
-	start(&data);
+	start(&data, argv);
 	return (0);
 }
