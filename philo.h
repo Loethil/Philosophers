@@ -23,29 +23,34 @@
 typedef struct s_philo
 {
 	struct s_data	*data;
-	int		status;
+	int		number;
+	int		eat_cont;
+	int		eating;
+	uint64_t	time_to_die;
+	pthread_mutex_t	r_fork;
+	pthread_mutex_t	l_fork;
 }		t_philo;
 
 typedef struct s_data
 {
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	lock;
 	pthread_t	*tid;
-	t_philo 	*philos;
+	t_philo 	*philo;
 	int		meals_num;
+	int		status;
 	int		sign_philo;
 	int		num_philo;
-	uint64_t	base_time;
 	uint64_t	death_time;
 	uint64_t	eat_time;
 	uint64_t	sleep_time;
 	uint64_t	start_time;
+	pthread_mutex_t	lock;
+	pthread_mutex_t	*forks;
 }		t_data;
 
 int		ft_isdigit(int c);
 int		ft_atoi(const char *str);
 uint64_t	get_time();
 int		ft_usleep(uint64_t time);
-int		setting_data(t_data *data, char **argv);
-
+void		setting_data(t_data *data, char **argv);
+void		setting_philo(t_data *data, t_philo *philo);
 #endif

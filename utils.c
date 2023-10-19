@@ -41,20 +41,42 @@ uint64_t	get_time()
 	return (time);
 }
 
-int	setting_data(t_data *data, char **argv)
+void	setting_data(t_data *data, char **argv)
 {
-	data->sign_philo = 1;
-	data->base_time = get_time();
+	int	i = 0;
+
+	if (argv[6])
+		data->meals_num = ft_atoi(argv[6]);
+	else
+		data->meals_num = -1;
+	data->sign_philo = 0;
 	data->num_philo = ft_atoi(argv[1]);
+	data->start_time = get_time();
 	data->death_time = ft_atoi(argv[2]);
 	data->eat_time = ft_atoi(argv[3]);
 	data->sleep_time = ft_atoi(argv[4]);
+	data->tid = malloc(data->num_philo * sizeof(t_data));
+	data->philo = malloc(data->num_philo * (sizeof(t_philo)));
 	data->forks = malloc(data->num_philo * sizeof(pthread_mutex_t));
-	return (0);
+	while (i < data->num_philo)
+		pthread_mutex_init(&data->forks[i++], NULL);
 }
 
-int	ft_usleep(uint64_t time)
+void	setting_philo(t_data *data, t_philo *philo)
 {
-	usleep(time * 1000);
-	return (0);
+	philo->data = data;
+	philo->number = data->sign_philo;
+	philo->eat_cont = 0;
+	philo->eating = 0;
+	philo->time_to_die = data->start_time + data->death_time;
+	philo->l_fork = data->forks[data->sign_philo];
+	if (philo->number == 1)
+		philo->r_fork = data->forks[data->num_philo];
+	philo->r_fork = data->forks[data->sign_philo -1];
 }
+
+// int	ft_usleep(uint64_t time)
+// {
+// 	usleep(time * 1000);
+// 	return (0);
+// }
