@@ -11,6 +11,16 @@
 /* ************************************************************************** */
 #include "philo.h"
 
+/*------------MESSAGE POUR LE FUTUR------------
+le but d'aujourd'hui est d'installer la routine donc de les faires manger dormir penser et mourir
+Pour la mort on commencera par quelque chose de tres simple
+essayer d'utiliser la boucle while pour leurs faires faire effectuer leur routine
+si besoin go changer les structures qui ne sont pas opti a 100 %
+aussi cree une fonction qui cree des messages voir git hub pour savoir si c'est de mon niveau
+refaire ft_usleep, objectif optionnel de la journee = avoir une version pilote mais operationnel de philo
+*/
+
+
 void	eat(t_data *stru, t_philo *philo)
 {
 	uint64_t	time;
