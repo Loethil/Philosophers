@@ -24,9 +24,9 @@ LIBINCLUDE = -lpthread -g3
 all: $(NAME)
 
 $(NAME): $(OOO)
-	gcc $(OOO) $(FLAG) $(LIBINCLUDE) -o $(NAME) -g3
+	gcc $(OOO) $(FLAG) $(LIBINCLUDE) -o $(NAME)
 .c.o:
-	gcc $(FLAG) $(LIBINCLUDE)  -c $< -o ${<:.c=.o} -g3
+	gcc $(FLAG) $(LIBINCLUDE)  -c $< -o ${<:.c=.o}
 clean:
 	rm -f $(OOO)
 fclean: clean
