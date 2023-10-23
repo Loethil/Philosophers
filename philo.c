@@ -23,21 +23,21 @@ void	message(t_philo *philo, char *message)
 
 void	drop_and_take(t_philo *philo, char *info, t_data *data)
 {
+	(void)data;
 	if (strcmp(info, TAKE) == 0)
 	{
-		pthread_mutex_lock(&data->philo->r_fork);
-		message(philo, "has taken a fork");
-		pthread_mutex_lock(&data->philo->l_fork);
-		message(philo, "has taken a fork");
+		pthread_mutex_lock(philo->l_fork);
+		message(philo, "has taken l fork");
+		pthread_mutex_lock(philo->r_fork);
+		message(philo, "has taken r fork");
 	}
 	else if (strcmp(info, DROP) == 0)
 	{
-		pthread_mutex_unlock(&data->philo->r_fork);
-		message(philo, "drop a fork");
-		pthread_mutex_unlock(&data->philo->l_fork);
-		message(philo, "drop a fork");
+		pthread_mutex_unlock(philo->l_fork);
+		message(philo, "drop l fork");
+		pthread_mutex_unlock(philo->r_fork);
+		message(philo, "drop r fork");
 	}
-	return ;
 }
 
 void	eat(t_data *data, t_philo *philo)
@@ -47,9 +47,10 @@ void	eat(t_data *data, t_philo *philo)
 	message(philo, "is eating");
 	usleep(data->eat_time * 1000);
 	drop_and_take(philo, DROP, data);
+	philo->eat_cont++;
+	printf("%d \n", philo->eat_cont);
 	message(philo, "is sleeping");
 	usleep(data->sleep_time * 1000);
-	philo->eat_cont++;
 }
 
 void	*routine(void *struc)
@@ -60,8 +61,8 @@ void	*routine(void *struc)
 	data = (t_data *)struc;
 	setting_philo(data, &philo);
 	message(&philo, "is created");
-	while (philo.eat_cont < data->meals_num)
-		eat(data, &philo);
+	// while (philo.eat_cont < data->meals_num)
+	eat(data, &philo);
 	return (NULL);
 }
 
@@ -73,14 +74,13 @@ int	start(t_data *struc)
 	{
 		struc->sign_philo = i + 1;
 		pthread_create(&struc->tid[i], NULL, &routine, struc);
-		usleep(1000);
+		usleep(2000);
 		i++;
 	}
 	i = 0;
 	while(i < struc->num_philo)
 	{
 		pthread_join(struc->tid[i], NULL);
-		pthread_mutex_destroy(&struc->lock);
 		i++;
 	}
 	return (0);

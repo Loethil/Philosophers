@@ -30,9 +30,8 @@ typedef struct s_philo
 	int		eat_cont;
 	int		eating;
 	uint64_t	time_to_die;
-	pthread_mutex_t	r_fork;
-	pthread_mutex_t	l_fork;
-
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	*l_fork;
 }		t_philo;
 
 typedef struct s_data

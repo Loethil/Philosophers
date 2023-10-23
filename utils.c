@@ -70,8 +70,9 @@ void	setting_philo(t_data *data, t_philo *philo)
 	philo->eat_cont = 0;
 	philo->eating = 0;
 	philo->time_to_die = data->start_time + data->death_time;
-	philo->l_fork = data->forks[data->sign_philo];
+	philo->l_fork = &data->forks[data->sign_philo];
 	if (philo->number == 1)
-		philo->r_fork = data->forks[data->num_philo];
-	philo->r_fork = data->forks[data->sign_philo -1];
+		philo->r_fork = &data->forks[data->num_philo];
+	else
+		philo->r_fork = &data->forks[data->sign_philo - 1];
 }
