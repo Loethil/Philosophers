@@ -13,8 +13,11 @@
 
 #ifndef PHILO_H
 # define PHILO_H
+# define TAKE "take"
+# define DROP "drop"
 # include <sys/time.h>
 # include <pthread.h>
+# include <string.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdint.h>
@@ -29,6 +32,7 @@ typedef struct s_philo
 	uint64_t	time_to_die;
 	pthread_mutex_t	r_fork;
 	pthread_mutex_t	l_fork;
+
 }		t_philo;
 
 typedef struct s_data
@@ -45,6 +49,7 @@ typedef struct s_data
 	uint64_t	start_time;
 	pthread_mutex_t	lock;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	msg;
 }		t_data;
 
 int		ft_isdigit(int c);

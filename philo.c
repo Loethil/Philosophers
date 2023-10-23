@@ -11,62 +11,76 @@
 /* ************************************************************************** */
 #include "philo.h"
 
-/*------------MESSAGE POUR LE FUTUR------------
-le but d'aujourd'hui est d'installer la routine donc de les faires manger dormir penser et mourir
-Pour la mort on commencera par quelque chose de tres simple
-essayer d'utiliser la boucle while pour leurs faires faire effectuer leur routine
-si besoin go changer les structures qui ne sont pas opti a 100 %
-aussi cree une fonction qui cree des messages voir git hub pour savoir si c'est de mon niveau
-refaire ft_usleep, objectif optionnel de la journee = avoir une version pilote mais operationnel de philo
-*/
-
-
-void	eat(t_data *stru, t_philo *philo)
+void	message(t_philo *philo, char *message)
 {
 	uint64_t	time;
 
-	time = get_time() - stru->start_time;
-	pthread_mutex_lock(&stru->philo->r_fork);
-	printf("[%ldms] philo %d taking r fork %d\n", time, philo->number, philo->number -1);
-	pthread_mutex_lock(&stru->philo->l_fork);
-	printf("[%ldms] philo %d taking l fork %d\n", time, philo->number, philo->number);
-	printf("[%ldms] philo %d start eating\n", time, philo->number);
-	usleep(stru->eat_time * 1000);
-	time = get_time() - stru->start_time;
-	pthread_mutex_unlock(&stru->philo->r_fork);
-	pthread_mutex_unlock(&stru->philo->l_fork);
-	printf("[%ldms] philo %d have finished eating\n", time, philo->number);
+	time = get_time() - philo->data->start_time;
+	pthread_mutex_lock(&philo->data->msg);
+	printf("[%ldms] %d %s\n", time, philo->number, message);
+	pthread_mutex_unlock(&philo->data->msg);
+}
+
+void	drop_and_take(t_philo *philo, char *info, t_data *data)
+{
+	if (strcmp(info, TAKE) == 0)
+	{
+		pthread_mutex_lock(&data->philo->r_fork);
+		message(philo, "has taken a fork");
+		pthread_mutex_lock(&data->philo->l_fork);
+		message(philo, "has taken a fork");
+	}
+	else if (strcmp(info, DROP) == 0)
+	{
+		pthread_mutex_unlock(&data->philo->r_fork);
+		message(philo, "drop a fork");
+		pthread_mutex_unlock(&data->philo->l_fork);
+		message(philo, "drop a fork");
+	}
+	return ;
+}
+
+void	eat(t_data *data, t_philo *philo)
+{
+	message(philo, "is thinking");
+	drop_and_take(philo, TAKE, data);
+	message(philo, "is eating");
+	usleep(data->eat_time * 1000);
+	drop_and_take(philo, DROP, data);
+	message(philo, "is sleeping");
+	usleep(data->sleep_time * 1000);
 	philo->eat_cont++;
 }
 
-void	*routine(void *data)
+void	*routine(void *struc)
 {
-	t_data	*stru;
+	t_data	*data;
 	t_philo	philo;
-
+	
+	data = (t_data *)struc;
 	setting_philo(data, &philo);
-	stru = (t_data *)data;
-	printf("[%ldms] philo %d created\n", get_time() - stru->start_time, philo.number);
-	eat(stru, &philo);
+	message(&philo, "is created");
+	while (philo.eat_cont < data->meals_num)
+		eat(data, &philo);
 	return (NULL);
 }
 
-int	start(t_data *data)
+int	start(t_data *struc)
 {
 	int	i = 0;
 
-	while (i < data->num_philo)
+	while (i < struc->num_philo)
 	{
-		data->sign_philo = i + 1;
-		pthread_create(&data->tid[i], NULL, &routine, data);
+		struc->sign_philo = i + 1;
+		pthread_create(&struc->tid[i], NULL, &routine, struc);
 		usleep(1000);
 		i++;
 	}
 	i = 0;
-	while(i < data->num_philo)
+	while(i < struc->num_philo)
 	{
-		pthread_join(data->tid[i], NULL);
-		pthread_mutex_destroy(&data->lock);
+		pthread_join(struc->tid[i], NULL);
+		pthread_mutex_destroy(&struc->lock);
 		i++;
 	}
 	return (0);
@@ -75,11 +89,11 @@ int	start(t_data *data)
 
 int	main(int argc, char **argv)
 {
-	t_data	data;
+	t_data	struc;
 	
 	if (argc < 5 || argc > 6)
 		return (0);
-	setting_data(&data, argv);
-	start(&data);
+	setting_data(&struc, argv);
+	start(&struc);
 	return (0);
 }

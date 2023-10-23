@@ -31,7 +31,7 @@ int	ft_atoi(const char *str)
 	return (res);
 }
 
-uint64_t	get_time()
+uint64_t	get_time(void)
 {
 	struct	timeval	clock;
 	uint64_t	time;
@@ -45,8 +45,8 @@ void	setting_data(t_data *data, char **argv)
 {
 	int	i = 0;
 
-	if (argv[6])
-		data->meals_num = ft_atoi(argv[6]);
+	if (argv[5])
+		data->meals_num = ft_atoi(argv[5]);
 	else
 		data->meals_num = -1;
 	data->sign_philo = 0;
@@ -60,6 +60,7 @@ void	setting_data(t_data *data, char **argv)
 	data->forks = malloc(data->num_philo * sizeof(pthread_mutex_t));
 	while (i < data->num_philo)
 		pthread_mutex_init(&data->forks[i++], NULL);
+	pthread_mutex_init(&data->msg, NULL);
 }
 
 void	setting_philo(t_data *data, t_philo *philo)
@@ -74,9 +75,3 @@ void	setting_philo(t_data *data, t_philo *philo)
 		philo->r_fork = data->forks[data->num_philo];
 	philo->r_fork = data->forks[data->sign_philo -1];
 }
-
-// int	ft_usleep(uint64_t time)
-// {
-// 	usleep(time * 1000);
-// 	return (0);
-// }
