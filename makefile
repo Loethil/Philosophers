@@ -13,7 +13,9 @@
 NAME = philo
 
 CCC = philo.c\
-	utils.c
+	utils.c\
+	minilibft.c\
+	data_set.c
 
 OOO = $(CCC:.c=.o)
 

@@ -11,27 +11,16 @@
 /* ************************************************************************** */
 #include "philo.h"
 
-void	message(t_philo *philo, char *message)
+void	drop_and_take(t_philo *philo, char *info)
 {
-	uint64_t	time;
-
-	time = get_time() - philo->data->start_time;
-	pthread_mutex_lock(&philo->data->msg);
-	printf("[%ldms] %d %s\n", time, philo->number, message);
-	pthread_mutex_unlock(&philo->data->msg);
-}
-
-void	drop_and_take(t_philo *philo, char *info, t_data *data)
-{
-	(void)data;
-	if (strcmp(info, TAKE) == 0)
+	if (ft_strcmp(info, TAKE) == 0)
 	{
 		pthread_mutex_lock(philo->l_fork);
 		message(philo, "has taken l fork");
 		pthread_mutex_lock(philo->r_fork);
 		message(philo, "has taken r fork");
 	}
-	else if (strcmp(info, DROP) == 0)
+	else if (ft_strcmp(info, DROP) == 0)
 	{
 		pthread_mutex_unlock(philo->l_fork);
 		message(philo, "drop l fork");
@@ -40,60 +29,58 @@ void	drop_and_take(t_philo *philo, char *info, t_data *data)
 	}
 }
 
-void	eat(t_data *data, t_philo *philo)
+void	eat(t_philo *philo)
 {
-	message(philo, "is thinking");
-	drop_and_take(philo, TAKE, data);
+	drop_and_take(philo, TAKE);
+	pthread_mutex_lock(&philo->lock);
 	message(philo, "is eating");
-	usleep(data->eat_time * 1000);
-	drop_and_take(philo, DROP, data);
+	usleep(philo->data->eat_time * 1000);
 	philo->eat_cont++;
-	printf("%d \n", philo->eat_cont);
+	pthread_mutex_unlock(&philo->lock);
+	drop_and_take(philo, DROP);
 	message(philo, "is sleeping");
-	usleep(data->sleep_time * 1000);
+	usleep(philo->data->sleep_time * 1000);
 }
 
-void	*routine(void *struc)
+void	*routine(void *data_pointer)
 {
-	t_data	*data;
-	t_philo	philo;
-	
-	data = (t_data *)struc;
-	setting_philo(data, &philo);
-	message(&philo, "is created");
-	// while (philo.eat_cont < data->meals_num)
-	eat(data, &philo);
+	t_philo	*philo;
+
+	philo = (t_philo *)data_pointer;
+	message(philo, "is created");
+	while (philo->eat_cont < philo->data->meals_nbr)
+		eat(philo);
+	message(philo, "is thinking");
 	return (NULL);
 }
 
-int	start(t_data *struc)
+int	start(t_data *data)
 {
-	int	i = 0;
+	int	i;
 
-	while (i < struc->num_philo)
+	i = 0;
+	while (i < data->max_philo)
 	{
-		struc->sign_philo = i + 1;
-		pthread_create(&struc->tid[i], NULL, &routine, struc);
+		pthread_create(&data->tid[i], NULL, &routine, &data->philo[i]);
 		usleep(2000);
 		i++;
 	}
 	i = 0;
-	while(i < struc->num_philo)
+	while (i < data->max_philo)
 	{
-		pthread_join(struc->tid[i], NULL);
+		pthread_join(data->tid[i], NULL);
 		i++;
 	}
 	return (0);
 }
 
-
 int	main(int argc, char **argv)
 {
-	t_data	struc;
-	
+	t_data	data;
+
 	if (argc < 5 || argc > 6)
 		return (0);
-	setting_data(&struc, argv);
-	start(&struc);
+	set(&data, argc, argv);
+	start(&data);
 	return (0);
 }
