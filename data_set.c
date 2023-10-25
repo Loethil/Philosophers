@@ -36,6 +36,9 @@ void	set_data(t_data *data, int argc, char **argv)
 	data->sleep_time = ft_atoi(argv[4]);
 	data->start_time = get_time();
 	pthread_mutex_init(&data->msg, NULL);
+	if (data->max_philo == 0|| data->death_time == 0 || data->eat_time == 0 \
+		|| data->sleep_time == 0 || data->start_time == 0)
+		return ;
 }
 
 void	set_philo(t_data *data)

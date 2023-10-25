@@ -38,8 +38,6 @@ void	eat(t_philo *philo)
 	philo->eat_cont++;
 	pthread_mutex_unlock(&philo->lock);
 	drop_and_take(philo, DROP);
-	message(philo, "is sleeping");
-	usleep(philo->data->sleep_time * 1000);
 }
 
 void	*routine(void *data_pointer)
@@ -49,12 +47,16 @@ void	*routine(void *data_pointer)
 	philo = (t_philo *)data_pointer;
 	message(philo, "is created");
 	while (philo->eat_cont < philo->data->meals_nbr)
+	{
 		eat(philo);
-	message(philo, "is thinking");
+		message(philo, "is sleeping");
+		usleep(philo->data->sleep_time * 1000);
+		message(philo, "is thinking");
+	}
 	return (NULL);
 }
 
-int	start(t_data *data)
+int	create_thread(t_data *data)
 {
 	int	i;
 
@@ -81,6 +83,6 @@ int	main(int argc, char **argv)
 	if (argc < 5 || argc > 6)
 		return (0);
 	set(&data, argc, argv);
-	start(&data);
+	create_thread(&data);
 	return (0);
 }
