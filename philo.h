@@ -28,7 +28,7 @@ typedef struct s_philo
 	int				id_nbr;
 	int				eat_cont;
 	int				status;
-	int				eating;
+	int				finish;
 	uint64_t		time_to_die;
 	pthread_mutex_t	lock;
 	pthread_mutex_t	*r_fork;
@@ -42,6 +42,7 @@ typedef struct s_data
 	int				meals_nbr;
 	int				id_philo;
 	int				max_philo;
+	int				one_dead;
 	uint64_t		death_time;
 	uint64_t		eat_time;
 	uint64_t		sleep_time;
@@ -59,5 +60,6 @@ void		set_data(t_data *data, int argc, char **argv);
 void		set_philo(t_data *data);
 void		set_fork(t_data *data);
 void		set(t_data *data, int argc, char **argv);
+void		ft_sleep(uint64_t timetosleep, t_philo *philo);
 void		message(t_philo *philo, char *message);
 #endif

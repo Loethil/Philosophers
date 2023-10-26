@@ -21,10 +21,25 @@ uint64_t	get_time(void)
 	return (time);
 }
 
+void	ft_sleep(uint64_t timetosleep, t_philo *philo)
+{
+	uint64_t	time;
+
+	time = get_time() - philo->data->start_time;
+	while (philo->data->one_dead == 0)
+	{
+		if (time >= timetosleep)
+			break ;
+		usleep(50);
+	}
+}
+
 void	message(t_philo *philo, char *message)
 {
 	uint64_t	time;
 
+	if (philo->data->one_dead == 1)
+		return ;
 	time = get_time() - philo->data->start_time;
 	pthread_mutex_lock(&philo->data->msg);
 	printf("[%ldms] %d %s\n", time, philo->id_nbr, message);
