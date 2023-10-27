@@ -11,14 +11,6 @@
 /* ************************************************************************** */
 #include "philo.h"
 
-int	ft_isdigit(int c)
-{
-	if (c >= 0 && c <= 9)
-		return (1);
-	else
-		return (0);
-}
-
 int	ft_atoi(const char *str)
 {
 	int	o;
@@ -26,8 +18,13 @@ int	ft_atoi(const char *str)
 
 	o = 0;
 	res = 0;
-	while (str[o] && (ft_isdigit(str[o] - '0') == 1))
-		res = res * 10 + str[o++] - '0';
+	while (str[o])
+	{
+		if (str[o] >= 48 && str[o] <= 57)
+			res = res * 10 + str[o++] - '0';
+		else
+			return (0);
+	}
 	return (res);
 }
 
@@ -45,5 +42,30 @@ int	ft_strcmp(const char *s1, const char *s2)
 	}
 	if (s2[i])
 		return (-1);
+	return (0);
+}
+
+void	ft_free(t_data *data)
+{
+	free(data->philo);
+	free(data->forks);
+	free(data->tid);
+	free(data->tideath);
+}
+
+int	check_data(t_data *data)
+{
+	if (data->meals_nbr <= 0)
+		return (1);
+	if (data->max_philo <= 0)
+		return (1);
+	if (data->death_time <= 0)
+		return (1);
+	if (data->eat_time <= 0)
+		return (1);
+	if (data->sleep_time <= 0)
+		return (1);
+	if (data->start_time <= 0)
+		return (1);
 	return (0);
 }

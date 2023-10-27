@@ -22,10 +22,13 @@ int	set_malloc(t_data *data)
 	data->tid = malloc (data->max_philo * sizeof(pthread_t));
 	if (!data->tid)
 		return (1);
+	data->tideath = malloc (data->max_philo * sizeof(pthread_t));
+	if (!data->tid)
+		return (1);
 	return (0);
 }
 
-void	set_data(t_data *data, int argc, char **argv)
+int	set_data(t_data *data, int argc, char **argv)
 {
 	data->meals_nbr = -1;
 	if (argc == 6)
@@ -36,13 +39,14 @@ void	set_data(t_data *data, int argc, char **argv)
 	data->sleep_time = ft_atoi(argv[4]);
 	data->start_time = get_time();
 	data->one_dead = 0;
-	pthread_mutex_init(&data->msg, NULL);
-	if (data->max_philo == 0|| data->death_time == 0 || data->eat_time == 0 \
-		|| data->sleep_time == 0 || data->start_time == 0)
-		return ;
+	if (pthread_mutex_init(&data->msg, NULL))
+		return (1);
+	if (check_data(data) == 1)
+		return (1);
+	return (0);
 }
 
-void	set_philo(t_data *data)
+int	set_philo(t_data *data)
 {
 	int	i;
 
@@ -50,22 +54,26 @@ void	set_philo(t_data *data)
 	while (i < data->max_philo)
 	{
 		data->philo[i].data = data;
-		data->philo[i].id_nbr = i + 1;
+		data->philo[i].id_nbr = i;
+		data->philo[i].finish = 0;
 		data->philo[i].eat_cont = 0;
 		data->philo[i].status = 0;
 		data->philo[i].time_to_die = data->death_time;
-		pthread_mutex_init(&data->philo[i].lock, NULL);
+		if (pthread_mutex_init(&data->philo[i].lock, NULL))
+			return (1);
 		i++;
 	}
+	return (0);
 }
 
-void	set_fork(t_data *data)
+int	set_fork(t_data *data)
 {
 	int	i;
 
 	i = 0;
 	while (i < data->max_philo)
-		pthread_mutex_init(&data->forks[i++], NULL);
+		if (pthread_mutex_init(&data->forks[i++], NULL))
+			return (1);
 	data->philo[0].l_fork = &data->forks[0];
 	data->philo[0].r_fork = &data->forks[data->max_philo - 1];
 	i = 1;
@@ -75,12 +83,18 @@ void	set_fork(t_data *data)
 		data->philo[i].r_fork = &data->forks[i - 1];
 		i++;
 	}
+	return (0);
 }
 
-void	set(t_data *data, int argc, char **argv)
+int	set(t_data *data, int argc, char **argv)
 {
-	set_data(data, argc, argv);
-	set_malloc(data);
-	set_philo(data);
-	set_fork(data);
+	if (set_data(data, argc, argv) == 1)
+		return (1);
+	if (set_malloc(data) == 1)
+		return (1);
+	if (set_philo(data) == 1)
+		return (1);
+	if (set_fork(data) == 1)
+		return (1);
+	return (0);
 }
