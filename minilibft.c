@@ -47,15 +47,26 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 void	ft_free(t_data *data)
 {
+	int	i;
+
+	i = 0;
+	pthread_mutex_destroy(&data->msg);
+	while (i < data->max_philo)
+	{
+		pthread_mutex_destroy(&data->philo[i].lock);
+		pthread_mutex_destroy(&data->forks[i++]);
+	}
+	if (data->one_dead == 0)
+		message(data->philo, "end of simulation");
 	free(data->philo);
 	free(data->forks);
 	free(data->tid);
 	free(data->tideath);
 }
 
-int	check_data(t_data *data)
+int	check_data(t_data *data, int argc)
 {
-	if (data->meals_nbr <= 0)
+	if (argc == 6 && data->meals_nbr <= 0)
 		return (1);
 	if (data->max_philo <= 0)
 		return (1);

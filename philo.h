@@ -57,7 +57,7 @@ uint64_t	get_time(void);
 int			set_malloc(t_data *data);
 int			ft_strcmp(const char *s1, const char *s2);
 int			set_data(t_data *data, int argc, char **argv);
-int			check_data(t_data *data);
+int			check_data(t_data *data, int argc);
 void		reset_timer_death(t_philo *philo);
 int			set_philo(t_data *data);
 int			set_fork(t_data *data);

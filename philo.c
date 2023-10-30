@@ -36,7 +36,7 @@ void	*check_death(void *data_pointer)
 		time = get_time() - philo->data->start_time;
 		if (time > philo->time_to_die)
 		{
-			message(philo, "is dead");
+			message(philo, "died");
 			philo->status = 1;
 			philo->data->one_dead = 1;
 			return (NULL);
@@ -53,14 +53,12 @@ void	*routine(void *data_pointer)
 
 	philo = (t_philo *)data_pointer;
 	reset_timer_death(philo);
-	message(philo, "is created");
 	while (philo->data->one_dead == 0 && philo->finish == 0)
 	{
 		eat(philo);
 		if (philo->eat_cont == philo->data->meals_nbr)
 		{
 			philo->finish = 1;
-			message(philo, "has finished");
 			break ;
 		}
 		message(philo, "is sleeping");

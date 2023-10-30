@@ -21,14 +21,14 @@ OOO = $(CCC:.c=.o)
 
 FLAG = -Wall -Wextra -Werror
 
-LIBINCLUDE = -lpthread -g3
+LIBINCLUDE = -lpthread
 
 all: $(NAME)
 
 $(NAME): $(OOO)
-	gcc $(OOO) $(FLAG) $(LIBINCLUDE) -o $(NAME)
+	cc $(OOO) $(FLAG) $(LIBINCLUDE) -o $(NAME)
 .c.o:
-	gcc $(FLAG) $(LIBINCLUDE)  -c $< -o ${<:.c=.o}
+	cc $(FLAG) -c $< -o ${<:.c=.o}
 clean:
 	rm -f $(OOO)
 fclean: clean

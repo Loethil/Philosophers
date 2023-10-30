@@ -36,6 +36,12 @@ void	message(t_philo *philo, char *message)
 {
 	uint64_t	time;
 
+	if (ft_strcmp("end of simulation", message) == 0)
+	{
+		time = get_time() - philo->data->start_time;
+		printf("[%ldms] %s\n", time, message);
+		return ;
+	}
 	if (philo->data->one_dead == 1)
 		return ;
 	pthread_mutex_lock(&philo->data->msg);
@@ -52,7 +58,6 @@ void	reset_timer_death(t_philo *philo)
 		return ;
 	time = get_time() - philo->data->start_time;
 	philo->time_to_die = time + philo->data->death_time;
-	// printf("philo %d next death time is %ld\n", philo->id_nbr, philo->time_to_die);
 }
 
 void	drop_and_take(t_philo *philo, char *info)
@@ -60,15 +65,13 @@ void	drop_and_take(t_philo *philo, char *info)
 	if (ft_strcmp(info, TAKE) == 0)
 	{
 		pthread_mutex_lock(philo->r_fork);
-		message(philo, "has taken r fork");
+		message(philo, "has taken a fork");
 		pthread_mutex_lock(philo->l_fork);
-		message(philo, "has taken l fork");
+		message(philo, "has taken a fork");
 	}
 	else if (ft_strcmp(info, DROP) == 0)
 	{
 		pthread_mutex_unlock(philo->r_fork);
-		message(philo, "drop r fork");
 		pthread_mutex_unlock(philo->l_fork);
-		message(philo, "drop l fork");
 	}
 }

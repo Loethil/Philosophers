@@ -41,7 +41,7 @@ int	set_data(t_data *data, int argc, char **argv)
 	data->one_dead = 0;
 	if (pthread_mutex_init(&data->msg, NULL))
 		return (1);
-	if (check_data(data) == 1)
+	if (check_data(data, argc) == 1)
 		return (1);
 	return (0);
 }
@@ -54,7 +54,7 @@ int	set_philo(t_data *data)
 	while (i < data->max_philo)
 	{
 		data->philo[i].data = data;
-		data->philo[i].id_nbr = i;
+		data->philo[i].id_nbr = i + 1;
 		data->philo[i].finish = 0;
 		data->philo[i].eat_cont = 0;
 		data->philo[i].status = 0;
