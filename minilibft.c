@@ -13,8 +13,8 @@
 
 int	ft_atoi(const char *str)
 {
-	int	o;
-	int	res;
+	int			o;
+	long int	res;
 
 	o = 0;
 	res = 0;
@@ -25,6 +25,8 @@ int	ft_atoi(const char *str)
 		else
 			return (0);
 	}
+	if (res < 0 || res > 2147483647)
+		return (0);
 	return (res);
 }
 
@@ -43,6 +45,15 @@ int	ft_strcmp(const char *s1, const char *s2)
 	if (s2[i])
 		return (-1);
 	return (0);
+}
+
+void	alone(t_philo *philo)
+{
+	pthread_mutex_lock(philo->r_fork);
+	message(philo, "has taken a fork");
+	while (philo->status == 0)
+		usleep(5);
+	pthread_mutex_unlock(philo->r_fork);
 }
 
 void	ft_free(t_data *data)

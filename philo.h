@@ -16,7 +16,6 @@
 # define DROP "drop"
 # include <sys/time.h>
 # include <pthread.h>
-# include <string.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdint.h>
@@ -58,10 +57,11 @@ int			set_malloc(t_data *data);
 int			ft_strcmp(const char *s1, const char *s2);
 int			set_data(t_data *data, int argc, char **argv);
 int			check_data(t_data *data, int argc);
-void		reset_timer_death(t_philo *philo);
 int			set_philo(t_data *data);
 int			set_fork(t_data *data);
 int			set(t_data *data, int argc, char **argv);
+void		alone(t_philo *philo);
+void		reset_timer_death(t_philo *philo);
 void		drop_and_take(t_philo *philo, char *info);
 void		ft_sleep(uint64_t timetosleep, t_philo *philo);
 void		ft_free(t_data *data);

@@ -15,14 +15,19 @@ void	eat(t_philo *philo)
 {
 	if (philo->data->one_dead == 1)
 		return ;
-	drop_and_take(philo, TAKE);
-	pthread_mutex_lock(&philo->lock);
-	reset_timer_death(philo);
-	message(philo, "is eating");
-	ft_sleep(philo->data->eat_time, philo);
-	pthread_mutex_unlock(&philo->lock);
-	drop_and_take(philo, DROP);
-	philo->eat_cont++;
+	if (philo->data->max_philo == 1)
+		alone(philo);
+	else
+	{
+		drop_and_take(philo, TAKE);
+		pthread_mutex_lock(&philo->lock);
+		reset_timer_death(philo);
+		message(philo, "is eating");
+		ft_sleep(philo->data->eat_time, philo);
+		pthread_mutex_unlock(&philo->lock);
+		drop_and_take(philo, DROP);
+		philo->eat_cont++;
+	}
 }
 
 void	*check_death(void *data_pointer)
@@ -95,7 +100,10 @@ int	main(int argc, char **argv)
 	t_data	data;
 
 	if (argc < 5 || argc > 6)
+	{
+		printf("not enough or too much arg\n");
 		return (0);
+	}
 	if (set(&data, argc, argv) == 1)
 	{
 		printf("invalid argument\n");
